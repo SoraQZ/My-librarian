@@ -1,7 +1,7 @@
 function getBookStatus(isbn, title, appkey, systemid) {
-    var res_finish = false;
-    var no_registed = false;
-    var res_json = '';
+    let res_finish = false;
+    let no_registed = false;
+    let res_json = '';
     while (true) {
         res_json = callCalilApi(appkey, isbn, systemid);
         if (isFinish(res_json)) {
@@ -18,7 +18,7 @@ function getBookStatus(isbn, title, appkey, systemid) {
         Logger.log('【未登録】ISBN:[' + isbn + ']の[' + title + ']は川越市の図書館に登録されていません。');
         return '-';
     } else {
-        var msg = '【登録済】ISBN:[' + isbn + ']の[' + title + ']は川越市の図書館に登録されてます。'
+        let msg = '【登録済】ISBN:[' + isbn + ']の[' + title + ']は川越市の図書館に登録されてます。'
         Logger.log(msg);
         return '蔵書あり';
         //notifyLine(msg)
@@ -30,7 +30,7 @@ function isFinish(res_json) {
 }
 
 function callCalilApi(appkey, isbn, systemid) {
-    var response = UrlFetchApp.fetch('http://api.calil.jp/check?appkey=' + appkey + '&isbn=' + isbn + '&systemid=' + systemid + '&format=json');
+    let response = UrlFetchApp.fetch('http://api.calil.jp/check?appkey=' + appkey + '&isbn=' + isbn + '&systemid=' + systemid + '&format=json');
     res_json = response.toString().slice(9, -2);
     Logger.log(res_json);
 
@@ -56,13 +56,13 @@ function scrapBooklog() {
     //console.log('スクレイピングで読み込んだ本の数',parser.length)
 
     // スプレッドシートから読み込む
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    let ss = SpreadsheetApp.getActiveSpreadsheet();
     // アクティブなシートを取得
-    var sh = ss.getActiveSheet();
+    let sh = ss.getActiveSheet();
     Utilities.sleep(100);
 
     //カラムの場所を取得
-    var checkcolumns = sh.getRange('A1:M1').getValues();
+    let checkcolumns = sh.getRange('A1:M1').getValues();
     for (var i = 0; i < 14; i++) {
         Utilities.sleep(100);
         colum_name = checkcolumns[0][i]
@@ -81,11 +81,11 @@ function scrapBooklog() {
     console.log('title', idx_title, 'isnb', idx_isbn, 'check', idx_check, 'status', idx_status)
     Utilities.sleep(1000)
     //getRangeで範囲を指定し、getValuesで値を取得
-    var isbn_sheets = sh.getRange(2, idx_isbn + 1, 300)
-    var isbn_sheet = isbn_sheets.getValues();
+    let isbn_sheets = sh.getRange(2, idx_isbn + 1, 300)
+    let isbn_sheet = isbn_sheets.getValues();
     console.log(isbn_sheet.flat());
     const bukunum = isbn_sheet.flat();
-    var number = 0;
+    let number = 0;
     //isbn_sheetのisbnの数を数える
     for (i in bukunum) {
         if (bukunum[i] !== '') {
@@ -130,10 +130,10 @@ function scrapBooklog() {
             let book_isbn = isbn[0].replace("EAN&quot;:&quot;", "");
             console.log(book_isbn, typeof (book_isbn));
 
-            var isbn_sheet = sh.getRange(2, idx_isbn + 1, 300).getValues();
+            let isbn_sheet = sh.getRange(2, idx_isbn + 1, 300).getValues();
 
             //ISBNがシートにない場合新しくシート追加して詳細記入(文字と数字で検索)
-            var sheet_index = isbn_sheet.flat().indexOf(book_isbn);
+            let sheet_index = isbn_sheet.flat().indexOf(book_isbn);
             if (sheet_index < 0) {
                 sheet_index = isbn_sheet.flat().indexOf(+book_isbn);
             }
@@ -174,9 +174,9 @@ function scrapBooklog() {
 }
 
 function notifyLine(message) {
-    var TOKEN = PropertiesService.getScriptProperties().getProperty("LINE_API_TOKEN");
-    var res = null;
-    var options = {
+    let TOKEN = PropertiesService.getScriptProperties().getProperty("LINE_API_TOKEN");
+    let res = null;
+    let options = {
         "method": "post",
         "payload": "message=" + message,
         "headers": { "Authorization": "Bearer " + TOKEN }
@@ -190,37 +190,37 @@ function main() {
 
     // スプレッドシートから読み込む
     Utilities.sleep(1000);
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    let ss = SpreadsheetApp.getActiveSpreadsheet();
     // アクティブなシートを取得
-    var sh = ss.getActiveSheet();
+    let sh = ss.getActiveSheet();
 
     console.log('sh', sh.length)
 
     //カラムの場所を取得(A1~M1まで)
-    var checkcolumns = sh.getRange('A1:M1').getValues();
-    for (var i = 0; i < 14; i++) {
+    let checkcolumns = sh.getRange('A1:M1').getValues();
+    for (let i = 0; i < 14; i++) {
         Utilities.sleep(100);
         colum_name = checkcolumns[0][i]
         if (colum_name == 'タイトル') {
-            var idx_title = i
+            let idx_title = i
         } else if (colum_name == 'ISBN') {
-            var idx_isbn = i
+            let idx_isbn = i
         } else if (colum_name == '蔵書有無') {
-            var idx_check = i
+            let idx_check = i
         } else if (colum_name == '読書状況') {
-            var idx_status = i
+            let idx_status = i
         }
     }
 
     //getRangeで範囲を指定し、getValuesで値を取得
-    var checkbooks = sh.getRange('A2:M300').getValues();
+    let checkbooks = sh.getRange('A2:M300').getValues();
 
     // 固定
-    var appkey = PropertiesService.getScriptProperties().getProperty("CALIL_APP_KEY");
-    var systemid = 'Saitama_Kawagoe';
+    let appkey = PropertiesService.getScriptProperties().getProperty("CALIL_APP_KEY");
+    let systemid = 'Saitama_Kawagoe';
 
     //蔵書確認（checkbooksの範囲内）
-    for (var i = 0; i < checkbooks.length; i++) {
+    for (let i = 0; i < checkbooks.length; i++) {
 
         // '蔵書あり'または''または文字以外でcontinue以降をスキップ
         if (checkbooks[i][idx_check] === "蔵書あり" || isNaN(checkbooks[i][idx_isbn]) || checkbooks[i][idx_isbn] === '') {
